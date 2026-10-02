@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model UserReference {
+  id          String   @id @default(cuid())
+  firebaseUid String   @unique // Connected to Firebase Auth
+  totalXp     Int      @default(0) // Cached XP for Leaderboard
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sentRequests      SkillSwapRequest[] @relation("SentRequests")
+  receivedRequests  SkillSwapRequest[] @relation("ReceivedRequests")
+  sessionsAsTutor   Session[]          @relation("TutorSessions")
+  sessionsAsLearner Session[]          @relation("LearnerSessions")
+  givenReviews      Review[]           @relation("GivenReviews")
+  receivedReviews   Review[]           @relation("ReceivedReviews")
+  xpTransactions    XpTransaction[]
+
+  @@index([totalXp])
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model SkillSwapRequest {
+  id           String        @id @default(cuid())
+  senderUid    String
+  receiverUid  String
+  skillOffered String
+  skillWanted  String
+  status       RequestStatus @default(PENDING)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  sender   UserReference @relation("SentRequests", fields: [senderUid], references: [firebaseUid], onDelete: Cascade)
+  receiver UserReference @relation("ReceivedRequests", fields: [receiverUid], references: [firebaseUid], onDelete: Cascade)
+  session  Session? // Created when ACCEPTED
+
+  @@index([senderUid])
+  @@index([receiverUid])
+  @@index([createdAt])
+}
+
+enum SessionStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+model Session {
+  id            String        @id @default(cuid())
+  requestId     String        @unique
+  tutorUid      String
+  learnerUid    String
+  scheduledTime DateTime?
+  status        SessionStatus @default(SCHEDULED)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  request SkillSwapRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  tutor   UserReference    @relation("TutorSessions", fields: [tutorUid], references: [firebaseUid])
+  learner UserReference    @relation("LearnerSessions", fields: [learnerUid], references: [firebaseUid])
+  reviews Review[]
+
+  @@index([tutorUid])
+  @@index([learnerUid])
+  @@index([createdAt])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  sessionId   String
+  reviewerUid String
+  revieweeUid String
+  rating      Int // 1 to 5
+  comment     String?
+  createdAt   DateTime @default(now())
+
+  session  Session       @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  reviewer UserReference @relation("GivenReviews", fields: [reviewerUid], references: [firebaseUid])
+  reviewee UserReference @relation("ReceivedReviews", fields: [revieweeUid], references: [firebaseUid])
+
+  @@unique([sessionId, reviewerUid]) // Ensure one review per user per session
+}
+
+model XpTransaction {
+  id        String   @id @default(cuid())
+  userUid   String
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now())
+
+  user UserReference @relation(fields: [userUid], references: [firebaseUid], onDelete: Cascade)
+}

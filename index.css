@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --neon-blue: #00f2ff;
+    --neon-purple: #bc13fe;
+}
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-x: hidden;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+h1, h2, h3, .font-heading {
+    font-family: 'Space Grotesk', sans-serif;
+}
+.mesh-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    transition: all 0.7s ease;
+}
+/* Vibrant Daylight Mesh */
+.mesh-bg {
+    background: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(232, 121, 249, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(34, 211, 238, 0.12) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(129, 140, 248, 0.12) 0px, transparent 50%);
+}
+/* Cyberpunk Dark Mesh */
+.dark .mesh-bg {
+    background: 
+        radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.25) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(192, 38, 211, 0.25) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.2) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(147, 51, 234, 0.2) 0px, transparent 50%);
+    background-color: #020617;
+}
+.glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+.dark .glass {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+.neo-card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(99, 102, 241, 0.08);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.dark .neo-card {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.neo-card:hover {
+    border-color: #6366f1;
+    box-shadow: 0 12px 24px -10px rgba(99, 102, 241, 0.2);
+    transform: translateY(-6px) scale(1.01);
+}
+.dark .neo-card:hover {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 25px rgba(0, 242, 255, 0.1);
+}
+.neon-text {
+    text-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+}
+.dark .neon-text {
+    text-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
+}
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.15);
+    border-radius: 10px;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+}
+@keyframes subtle-float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0px); }
+}
+.animate-float {
+    animation: subtle-float 5s ease-in-out infinite;
+}
